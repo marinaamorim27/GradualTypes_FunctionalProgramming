@@ -30,6 +30,7 @@ typeof ctx (TmVar x) = search x ctx
 typeof ctx (TmApp t1 t2) = let tyT1 = typeof ctx t1 
                                tyT2 = typeof ctx t2 in
                                case tyT1 of (TyArr tyT11 tyT12) -> if tyT2 == tyT11 then tyT12 else error "parameter type mismatch"
+                                             TyDyn              -> TyDyn
                                             _                   -> error "arrow type expected"
 
 
