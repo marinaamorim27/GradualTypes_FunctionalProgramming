@@ -31,7 +31,19 @@ typeof ctx (TmApp t1 t2) = let tyT1 = typeof ctx t1
                                tyT2 = typeof ctx t2 in
                                case tyT1 of (TyArr tyT11 tyT12) -> if tyT2 == tyT11 then tyT12 else error "parameter type mismatch"
                                             _                   -> error "arrow type expected"
- 
+
+
+isVal :: Term -> Bool
+isVal TmTrue = True
+isVal TmFalse = True
+isVal (TmAbs _ _ t) = isVal t
+isVal (TmApp t1 t2) = (isVal t1) && (isVal t2)
+isVal (TmVar x) = True
+isVal _ = False
+
+search :: String -> Context -> Ty
+search v [] = error "variable not found"
+search v ((x,y):xs) = if x == v then y else (search v xs)
 
 fun :: Ty -> Ty
 fun TyDyn = TyArr TyDyn TyDyn
@@ -43,7 +55,7 @@ expTyp TyDyn t1 = t1
 expTyp TyInt TyInt = TyInt
 expTyp TyBool TyBool = TyBool
 expTyp (TyArr t11 t12) (TyArr t21 t22) = TyArr (expTyp t11 t21) (expTyp t12 t22)
-expTyp _ _ = error 
+expTyp _ _ = error "error"
 
 consis :: Ty -> Ty -> Bool
-consis t1 t2 = if (expTyp t1 t2 /= error) then true else false
+consis t1 t2 = if (expTyp t1 t2 /= error "error") then True else False
